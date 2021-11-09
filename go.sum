@@ -1,0 +1,4 @@
+github.com/polarspetroll/gopio v0.0.0-20211104055917-dadb3f50f94d h1:Tep67KIpjgvD7CvKDATLBs9Aw6wyiwS2u6ruGbT61Sc=
+github.com/polarspetroll/gopio v0.0.0-20211104055917-dadb3f50f94d/go.mod h1:QTgxHCXFaH07j0XYWPF080clxov97MRH03pHuxqOtHo=
+periph.io/x/periph v3.6.8+incompatible h1:lki0ie6wHtvlilXhIkabdCUQMpb5QN4Fx33yNQdqnaA=
+periph.io/x/periph v3.6.8+incompatible/go.mod h1:EWr+FCIU2dBWz5/wSWeiIUJTriYv9v2j2ENBmgYyy7Y=

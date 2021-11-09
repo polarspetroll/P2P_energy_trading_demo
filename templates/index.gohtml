@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Index</title>
+	<script type="text/javascript" src="/statics/script.js"></script>
+</head>
+
+<body style="background-color: black;">
+	<h4 style="color:white;"> Hello {{.Username}}</h4>
+	<div align="center">
+		<fieldset style="width:500px">
+			<form method="POST">
+				<input id="quantity" type="number" name="kw" min="1" placeholder="Quantity(Nano Watts)" />
+				<br/>
+				<select id="timeunits" name="unit">
+					<option value="second">Second</option>
+					<option value="minute">Minute</option>
+					<option value="hour">Hour</option>
+					<option value="day">Day</option>
+					<option value="week">Week</option>
+					<option value="month">Month</option>
+				</select>
+				<input id="dur" type="number" min="1" name="period" placeholder="Duration" />
+				<br/>
+				<br/>
+				<input type="submit" value="Submit Order" /> </form>
+			<br/>
+			<button onclick="calculate()">Calculate price</button>
+			<br/>
+			<p id="out" hidden></p>
+			<p style="color:cyan;">{{.Message}}</p>
+		</fieldset>
+	</div>
+</body>
+
+</html>
