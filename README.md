@@ -18,5 +18,20 @@
 
 ---
 
-- ina 
-	- gcc test.c lib_c.c -I /usr/include/python3.7/ -lpython3.7 $(python3.7-config --includes --ldflags)
+###### Installation
+
+```
+git clone https://github.com/polarspetroll/P2P_energy_trading_demo.git
+make install
+make build
+make run
+```
+
+###### Configuration
+
+- config.json
+```json
+{
+	"relays": [] // Relay Pins. Eg : [40, 38, 10]
+}
+```
