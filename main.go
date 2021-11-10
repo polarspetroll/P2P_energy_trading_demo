@@ -402,6 +402,7 @@ func Listen() {
 
     go func() {
         sig := <-sigs
+        fmt.Printf("New OS Signal : %v\n", sig)
         done <- true
     }()
 
