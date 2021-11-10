@@ -414,5 +414,6 @@ func Listen() {
 			pin = gopio.PinMode(p, gopio.OUT)
 			pin.DigitalWrite(gopio.HIGH)
 		}
+		os.Exit(0)
 	}()
 }
