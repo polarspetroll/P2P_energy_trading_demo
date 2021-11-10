@@ -1,11 +1,3 @@
-##### Requirements 
-
-- Python C API
-- Python rpi_lcd library
-- Python ina_219 library
-- go github.com/polarspetroll/gopio package
-
-
 ##### Hardware Requirements
 
 - INA219 Module
