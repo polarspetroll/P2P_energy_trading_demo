@@ -95,6 +95,7 @@ func main() {
 		}
 	}()
 	go Monitor(len(relay_pins))
+	go Listen()
 	http.ListenAndServe(":8080", nil)
 }
 
