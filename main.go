@@ -17,12 +17,12 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
-	"os/signal"
-    "syscall"
 
 	"github.com/polarspetroll/gopio"
 )
@@ -392,25 +392,24 @@ func ParseConfig() {
 	}
 }
 
-
 /// SIGNAL ///
 func Listen() {
 
-    sigs := make(chan os.Signal, 1)
-    done := make(chan bool, 1)
+	sigs := make(chan os.Signal, 1)
+	done := make(chan bool, 1)
 
-    signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
-    go func() {
-        sig := <-sigs
-        fmt.Printf("New OS Signal : %v\n", sig)
-        done <- true
-    }()
+	go func() {
+		sig := <-sigs
+		fmt.Printf("New OS Signal : %v\n", sig)
+		done <- true
+	}()
 
-    <-done
-    func(){
-    	var pin gopio.WiringPiPin
-	    for _, p := range relay_pins {
+	<-done
+	func() {
+		var pin gopio.WiringPiPin
+		for _, p := range relay_pins {
 			pin = gopio.PinMode(p, gopio.OUT)
 			pin.DigitalWrite(gopio.LOW)
 		}
