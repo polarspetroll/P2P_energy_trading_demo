@@ -412,7 +412,7 @@ func Listen() {
     	var pin gopio.WiringPiPin
 	    for _, p := range relay_pins {
 			pin = gopio.PinMode(p, gopio.OUT)
-			pin.DigitalWrite(gopio.HIGH)
+			pin.DigitalWrite(gopio.LOW)
 		}
 		os.Exit(0)
 	}()
