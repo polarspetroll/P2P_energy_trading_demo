@@ -21,6 +21,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"os/signal"
+    "syscall"
 
 	"github.com/polarspetroll/gopio"
 )
@@ -386,5 +388,26 @@ func ParseConfig() {
 	json.Unmarshal(b, &out)
 	for _, v := range out.Pins {
 		relay_pins = append(relay_pins, v)
+	}
+}
+
+
+/// SIGNAL ///
+func Listen() {
+
+    sigs := make(chan os.Signal, 1)
+    done := make(chan bool, 1)
+
+    signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+    go func() {
+        sig := <-sigs
+        done <- true
+    }()
+
+    <-done
+    for _, p := range relay_pins {
+		pin = gopio.PinMode(p, gopio.OUT)
+		pin.DigitalWrite(gopio.HIGH)
 	}
 }
