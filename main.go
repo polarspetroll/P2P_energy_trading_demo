@@ -125,7 +125,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		relay_len := len(relay_pins)
-		addr_len := len(InaAddrs)
+		addr_len := len(I2CAddrs)
 		if relay_len == 0 || addr_len == 0 {
 			http.Error(w, "Out Of Service", 500)
 			return
@@ -135,9 +135,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		indx := len(relay_pins) - 1
 		user.RelayPin = gopio.PinMode(relay_pins[indx], gopio.OUT)
 		relay_pins = append(relay_pins[:indx], relay_pins[indx+1:]...)
-		indx = len(ina_addresses) - 1
-		user.InaAddr = InaAddrs[indx]
-		InaAddrs = append(InaAddrs[:indx], InaAddrs[indx+1:]...)
+		indx = len(I2CAddrs) - 1
+		user.InaAddr = I2CAddrs[indx]
+		I2CAddrs = append(I2CAddrs[:indx], I2CAddrs[indx+1:]...)
 
 		new_trial := Trial{TimeLeft: total, Price: price, UnitsLeft: kwatt}
 		user.NewTrial(new_trial)
@@ -326,14 +326,13 @@ func Monitor(m int) {
 	C.LCD_Write(C.CString("Service Started!"), C.int(1), C.CString("left"))
 
 	time.Sleep(3 * time.Second)
-	var val string
-	var val2 string
-	var length int
-	var temp string
+	var val, temp, val2 string
+	var length, length2 int
 	var out []byte
+
 	for {
 		length = len(relay_pins)
-		length2 = len(InaAddrs)
+		length2 = len(I2CAddrs)
 		if length == 0 || length2 == 0 {
 			C.LCD_Write(C.CString("Out Of Service"), C.int(1), C.CString("left"))
 			time.Sleep(2 * time.Second)
