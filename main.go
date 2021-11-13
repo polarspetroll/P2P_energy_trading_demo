@@ -125,7 +125,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		relay_len := len(relay_pins)
-		if relay_len == 0 {
+		addr_len := len(InaAddrs)
+		if relay_len == 0 || addr_len == 0 {
 			http.Error(w, "Out Of Service", 500)
 			return
 		}
@@ -332,12 +333,13 @@ func Monitor(m int) {
 	var out []byte
 	for {
 		length = len(relay_pins)
-		if length == 0 {
+		length2 = len(InaAddrs)
+		if length == 0 || length2 == 0 {
 			C.LCD_Write(C.CString("Out Of Service"), C.int(1), C.CString("left"))
 			time.Sleep(2 * time.Second)
 		} else {
-			val = fmt.Sprintf("Total Relays:%d", m)
-			val2 = fmt.Sprintf("Free Relays:%d", length)
+			val = fmt.Sprintf("Total Nodes:%d", m)
+			val2 = fmt.Sprintf("Free Nodes:%d", length)
 			C.Double_Write(C.CString(val), C.CString(val2))
 			time.Sleep(3 * time.Second)
 		}
@@ -348,7 +350,7 @@ func Monitor(m int) {
 		temp = string(out)
 		temp = strings.ReplaceAll(temp, "temp=", "")
 		temp = strings.ReplaceAll(temp, "'C\n", "c")
-		C.LCD_Write(C.CString(fmt.Sprintf("CPU Temp:%s", temp)), C.int(1), C.CString("left"))
+		C.Double_Write(C.CString(fmt.Sprintf("CPU Temp:%s", temp)), C.CString(fmt.Sprintf("Total Power Meters:%d", length2)))
 		time.Sleep(2 * time.Second)
 	}
 }
