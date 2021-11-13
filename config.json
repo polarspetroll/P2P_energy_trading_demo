@@ -1,3 +1,5 @@
 {
-	"relays": [40]
+	"relays": [40],
+	"interval": "1s",
+	"ina_addresses": [0x40]
 }

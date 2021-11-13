@@ -17,11 +17,9 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"os/signal"
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/polarspetroll/gopio"
@@ -29,37 +27,15 @@ import (
 
 var (
 	total_consumption float64
-	INTERVALSLEEP     time.Duration = 657 * time.Millisecond
+	INTERVALSLEEP     time.Duration
 	mutex             sync.Mutex
+	mutex2            sync.Mutex
+	I2CAddrs          []int
 	relay_pins        []int              = []int{}
 	sessions          []SID              = []SID{}
 	trials            []User             = []User{}
 	tmps              *template.Template = template.Must(template.ParseGlob("templates/*.gohtml"))
 )
-
-type HTML struct {
-	Username string
-	Message  string
-}
-
-type Trial struct {
-	TimeLeft  time.Duration
-	UnitsLeft float64
-	Price     int
-}
-
-type User struct {
-	Username  string
-	Password  string
-	Condition Trial
-	RelayPin  gopio.WiringPiPin
-	InaAddr   int
-}
-
-type SID struct {
-	Sid      string
-	Username string
-}
 
 func main() {
 	gopio.GopioSetUp()
@@ -95,7 +71,6 @@ func main() {
 		}
 	}()
 	go Monitor(len(relay_pins))
-	go Listen()
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -155,9 +130,14 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		price := CalculatePrice(total, int(kwatt))
+
 		indx := len(relay_pins) - 1
 		user.RelayPin = gopio.PinMode(relay_pins[indx], gopio.OUT)
 		relay_pins = append(relay_pins[:indx], relay_pins[indx+1:]...)
+		indx = len(ina_addresses) - 1
+		user.InaAddr = InaAddrs[indx]
+		InaAddrs = append(InaAddrs[:indx], InaAddrs[indx+1:]...)
+
 		new_trial := Trial{TimeLeft: total, Price: price, UnitsLeft: kwatt}
 		user.NewTrial(new_trial)
 		trials = append(trials, user)
@@ -373,10 +353,6 @@ func Monitor(m int) {
 	}
 }
 
-type Config struct {
-	Pins []int `json:"relays"`
-}
-
 func ParseConfig() {
 	f, err := os.Open("config.json")
 	defer f.Close()
@@ -390,29 +366,11 @@ func ParseConfig() {
 	for _, v := range out.Pins {
 		relay_pins = append(relay_pins, v)
 	}
-}
-
-/// SIGNAL ///
-func Listen() {
-
-	sigs := make(chan os.Signal, 1)
-	done := make(chan bool, 1)
-
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-
-	go func() {
-		sig := <-sigs
-		fmt.Printf("New OS Signal : %v\n", sig)
-		done <- true
-	}()
-
-	<-done
-	func() {
-		var pin gopio.WiringPiPin
-		for _, p := range relay_pins {
-			pin = gopio.PinMode(p, gopio.OUT)
-			pin.DigitalWrite(gopio.LOW)
-		}
-		os.Exit(0)
-	}()
+	INTERVALSLEEP, err = time.ParseDuration(out.Interval)
+	if err != nil {
+		log.Fatal("INVALID INTERVAL IN CONFIG FILE")
+	}
+	for _, v := range out.InaAddrs {
+		I2CAddrs = append(I2CAddrs, v)
+	}
 }
