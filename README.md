@@ -24,6 +24,8 @@ make run
 - config.json
 ```json
 {
-	"relays": [] // Relay Pins. Eg : [40, 38, 10]
+	"relays": [40], //relay pins
+	"interval": "1s", // interval sleep for consumption 
+	"ina_addresses": ["0x40"] // available addresses for INA219 module
 }
 ```
